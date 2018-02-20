@@ -19,7 +19,7 @@ interface CLIProps {
 
 export default class CLI extends EventEmitter implements CLIProps {
 
-    static create(options: CLIProps): CLI;
+    static create(options?: CLIProps): CLI;
 
     constructor(name?: string, title?: string);
 
