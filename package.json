@@ -1,6 +1,6 @@
 {
   "name": "3h-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A cli lib.",
   "main": "js/3h-cli.js",
   "scripts": {
