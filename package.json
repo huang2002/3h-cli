@@ -1,11 +1,12 @@
 {
   "name": "3h-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A cli lib.",
   "main": "js/3h-cli.js",
   "scripts": {
     "test": "node test/test.js v0 -a v1 -b -c v2"
   },
+  "types": "ts/3h-cli.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/huang2002/3h-cli.git"
