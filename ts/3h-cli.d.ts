@@ -17,7 +17,7 @@ interface CLIProps {
     filter?: boolean;
 }
 
-export default class CLI extends EventEmitter implements CLIProps {
+declare class CLI extends EventEmitter implements CLIProps {
 
     static create(options?: CLIProps): CLI;
 
@@ -43,3 +43,5 @@ export default class CLI extends EventEmitter implements CLIProps {
     on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
 
 }
+
+export = CLI;
