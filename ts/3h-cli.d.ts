@@ -1,12 +1,12 @@
-import EventEmitter from 'events';
-
-interface CLIArg {
+/// <reference types="node" />
+import EventEmitter = require('events');
+export interface CLIArg {
     name: string;
     val?: string;
     help?: string;
+    alias?: string[];
 }
-
-interface CLIProps {
+export interface CLIProps {
     name?: string;
     title?: string;
     argArr?: CLIArg[];
@@ -14,34 +14,74 @@ interface CLIProps {
     tabSize?: number;
     nameSize?: number;
     gapSize?: number;
+    aliasGapSize?: number;
     filter?: boolean;
 }
-
-declare class CLI extends EventEmitter implements CLIProps {
-
-    static create(options?: CLIProps): CLI;
-
-    constructor(name?: string, title?: string);
-
-    public name: string;
-    public title?: string;
-    public argArr: CLIArg[];
-    public firstArg?: CLIArg;
-    public tabSize: number;
-    public nameSize: number;
-    public gapSize: number;
-    public filter: boolean;
-
-    public help(): this;
-    public arg(arg: CLIArg): this;
-    public first(arg: CLIArg): this;
-    public set(options: CLIProps): this;
-    public exec(rawArgv: string[]): this;
-
-    on(event: 'error', listener: (err: Error) => void): this;
-    on(event: 'extra', listener: (key: string) => void): this;
-    on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
-
-}
-
-export = CLI;
+declare const _default: {
+    new (public name?: string, public title?: string): {
+        name: string;
+        title: string;
+        error(msg: string): void;
+        argArr: CLIArg[];
+        arg(arg: CLIArg): any;
+        firstArg?: CLIArg | undefined;
+        first(arg: CLIArg): any;
+        tabSize: number;
+        nameSize: number;
+        gapSize: number;
+        aliasGapSize: number;
+        help(): any;
+        filter: boolean;
+        parse(argv: string[]): Map<string, string[]>;
+        set(options: CLIProps): any;
+        exec(rawArgv: string[]): any;
+        addListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        on(event: string | symbol, listener: (...args: any[]) => void): any;
+        once(event: string | symbol, listener: (...args: any[]) => void): any;
+        removeListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        removeAllListeners(event?: string | symbol | undefined): any;
+        setMaxListeners(n: number): any;
+        getMaxListeners(): number;
+        listeners(event: string | symbol): Function[];
+        rawListeners(event: string | symbol): Function[];
+        emit(event: string | symbol, ...args: any[]): boolean;
+        listenerCount(type: string | symbol): number;
+        prependListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        eventNames(): (string | symbol)[];
+    };
+    create(options?: CLIProps): {
+        name: string;
+        title: string;
+        error(msg: string): void;
+        argArr: CLIArg[];
+        arg(arg: CLIArg): any;
+        firstArg?: CLIArg | undefined;
+        first(arg: CLIArg): any;
+        tabSize: number;
+        nameSize: number;
+        gapSize: number;
+        aliasGapSize: number;
+        help(): any;
+        filter: boolean;
+        parse(argv: string[]): Map<string, string[]>;
+        set(options: CLIProps): any;
+        exec(rawArgv: string[]): any;
+        addListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        on(event: string | symbol, listener: (...args: any[]) => void): any;
+        once(event: string | symbol, listener: (...args: any[]) => void): any;
+        removeListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        removeAllListeners(event?: string | symbol | undefined): any;
+        setMaxListeners(n: number): any;
+        getMaxListeners(): number;
+        listeners(event: string | symbol): Function[];
+        rawListeners(event: string | symbol): Function[];
+        emit(event: string | symbol, ...args: any[]): boolean;
+        listenerCount(type: string | symbol): number;
+        prependListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): any;
+        eventNames(): (string | symbol)[];
+    };
+    EventEmitter: typeof EventEmitter.EventEmitter;
+};
+export = _default;

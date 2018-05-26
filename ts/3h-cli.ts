@@ -1,13 +1,13 @@
 import EventEmitter = require('events');
 
-interface CLIArg {
+export interface CLIArg {
     name: string;
     val?: string;
     help?: string;
     alias?: string[];
 }
 
-interface CLIProps {
+export interface CLIProps {
     name?: string;
     title?: string;
     argArr?: CLIArg[];
@@ -19,6 +19,7 @@ interface CLIProps {
     filter?: boolean;
 }
 
+///@ts-ignore
 export = class CLI extends EventEmitter implements CLIProps {
 
     static create(options: CLIProps = {}) {
