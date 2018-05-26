@@ -7,9 +7,9 @@ module.exports = class CLI extends EventEmitter {
         this.title = title;
         this.argArr = new Array();
         this.tabSize = 4;
-        this.nameSize = 6;
+        this.nameSize = 10;
         this.gapSize = 8;
-        this.eol = '\n';
+        this.aliasGapSize = 1;
         this.filter = true;
     }
     static create(options = {}) {
@@ -44,7 +44,7 @@ module.exports = class CLI extends EventEmitter {
         return this;
     }
     help() {
-        const { tabSize, nameSize, gapSize, eol } = this, tab = ' '.repeat(tabSize), hasDefArgs = this.argArr.length > 0, firstArg = this.firstArg, firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
+        const { tabSize, nameSize, gapSize } = this, tab = ' '.repeat(tabSize), hasDefArgs = this.argArr.length > 0, firstArg = this.firstArg, firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
         let usage = this.name + ' ';
         if (firstArg !== undefined) {
             usage += `<${firstArg_val}>`;
@@ -52,14 +52,22 @@ module.exports = class CLI extends EventEmitter {
         if (hasDefArgs) {
             usage += ' [options]';
         }
-        const helpOffset = eol + ' '.repeat(tabSize + nameSize + gapSize);
+        const helpOffset = '\n' + ' '.repeat(tabSize + nameSize + gapSize);
         let options = '';
         if (firstArg !== undefined) {
             options += '\n' + tab + `<${firstArg_val}>`.padEnd(nameSize + gapSize) +
                 (firstArg.help || 'The first arg.').replace(/\n/g, helpOffset);
         }
         this.argArr.forEach(arg => {
-            options += '\n' + tab + ('-' + arg.name).padEnd(nameSize) +
+            const { alias } = arg;
+            let { name } = arg;
+            if (alias) {
+                const { aliasGapSize } = this;
+                alias.forEach(a => {
+                    name += `,${' '.repeat(aliasGapSize)}-${a}`;
+                });
+            }
+            options += '\n' + tab + ('-' + name).padEnd(nameSize) +
                 (arg.val && `<${arg.val}>` || '').padEnd(gapSize) +
                 (arg.help || `"${arg.name}" arg.`).replace(/\n/g, helpOffset);
         });

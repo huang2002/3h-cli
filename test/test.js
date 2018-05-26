@@ -4,7 +4,7 @@ const cli = CLI.create({
     name: 'test.js',
     title: 'Here is the test script.'
 }).set({
-    nameSize: 4,
+    nameSize: 10,
     tabSize: 3
 }).first({
     name: 'first',

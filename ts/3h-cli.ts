@@ -15,6 +15,7 @@ interface CLIProps {
     tabSize?: number;
     nameSize?: number;
     gapSize?: number;
+    aliasGapSize?: number;
     filter?: boolean;
 }
 
@@ -60,11 +61,11 @@ export = class CLI extends EventEmitter implements CLIProps {
     }
 
     public tabSize = 4;
-    public nameSize = 6;
+    public nameSize = 10;
     public gapSize = 8;
-    public eol = '\n';
+    public aliasGapSize = 1;
     public help() {
-        const { tabSize, nameSize, gapSize, eol } = this,
+        const { tabSize, nameSize, gapSize } = this,
             tab = ' '.repeat(tabSize),
             hasDefArgs = this.argArr.length > 0,
             firstArg = this.firstArg,
@@ -78,14 +79,22 @@ export = class CLI extends EventEmitter implements CLIProps {
             usage += ' [options]';
         }
 
-        const helpOffset = eol + ' '.repeat(tabSize + nameSize + gapSize);
+        const helpOffset = '\n' + ' '.repeat(tabSize + nameSize + gapSize);
         let options = '';
         if (firstArg !== undefined) {
             options += '\n' + tab + `<${firstArg_val}>`.padEnd(nameSize + gapSize) +
                 (firstArg.help || 'The first arg.').replace(/\n/g, helpOffset);
         }
         this.argArr.forEach(arg => {
-            options += '\n' + tab + ('-' + arg.name).padEnd(nameSize) +
+            const { alias } = arg;
+            let { name } = arg;
+            if (alias) {
+                const { aliasGapSize } = this;
+                alias.forEach(a => {
+                    name += `,${' '.repeat(aliasGapSize)}-${a}`;
+                });
+            }
+            options += '\n' + tab + ('-' + name).padEnd(nameSize) +
                 (arg.val && `<${arg.val}>` || '').padEnd(gapSize) +
                 (arg.help || `"${arg.name}" arg.`).replace(/\n/g, helpOffset);
         });

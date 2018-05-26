@@ -17,7 +17,7 @@ const cli = CLI.create({
 }).set({
     filter: true,
     tabSize: 3,
-    nameSize: 4,
+    nameSize: 10,
     gapSize: 6
 }).first({
     name: 'a',
@@ -25,6 +25,7 @@ const cli = CLI.create({
     help: 'Help for\nthe first arg.'
 }).arg({
     name: 'h',
+    alias: ['help'],
     help: 'Show this.'
 }).arg({
     name: 'b',
@@ -50,17 +51,17 @@ const cli = CLI.create({
 > node MyCLI firstArg
 Received a->["firstArg"].
 
->node MyCLI -h
+>node MyCLI -help
 Received h->[].
 (Here is the help info:)
 Here is the title.
 
 MyCLI <v1> [options]
 
-   <v1>      Help for
-             the first arg.
-   -h        Show this.
-   -b  <v2>  Arg "b".
+   <v1>            Help for
+                   the first arg.
+   -h, -help       Show this.
+   -b        <v2>  Arg "b".
 
 ```
 
