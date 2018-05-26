@@ -16,6 +16,7 @@ export interface CLIProps {
     nameSize?: number;
     gapSize?: number;
     aliasGapSize?: number;
+    lineGapSize?: number;
     filter?: boolean;
 }
 
@@ -77,11 +78,13 @@ class CLI extends EventEmitter implements CLIProps {
     nameSize = 10;
     gapSize = 8;
     aliasGapSize = 1;
+    lineGapSize = 0;
     help() {
-        const { tabSize, nameSize, gapSize } = this,
+        const { tabSize, nameSize, gapSize, lineGapSize, argArr, firstArg } = this,
+            { length } = argArr,
+            hasDefArgs = length > 0,
             tab = ' '.repeat(tabSize),
-            hasDefArgs = this.argArr.length > 0,
-            firstArg = this.firstArg,
+            lineGap = '\n'.repeat(lineGapSize),
             firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
 
         let usage = this.name + ' ';
@@ -98,7 +101,10 @@ class CLI extends EventEmitter implements CLIProps {
             options += '\n' + tab + `<${firstArg_val}>`.padEnd(nameSize + gapSize) +
                 (firstArg.help || 'The first arg.').replace(/\n/g, helpOffset);
         }
-        this.argArr.forEach(arg => {
+        argArr.forEach((arg, i) => {
+            if (!(i === 0 && firstArg === undefined)) {
+                options += lineGap;
+            }
             const { alias } = arg;
             let { name } = arg;
             if (alias) {

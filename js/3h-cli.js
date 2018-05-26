@@ -8,6 +8,7 @@ class CLI extends EventEmitter {
         this.nameSize = 10;
         this.gapSize = 8;
         this.aliasGapSize = 1;
+        this.lineGapSize = 0;
         this.filter = true;
         this.name = name;
         this.title = title;
@@ -48,7 +49,7 @@ class CLI extends EventEmitter {
         return this;
     }
     help() {
-        const { tabSize, nameSize, gapSize } = this, tab = ' '.repeat(tabSize), hasDefArgs = this.argArr.length > 0, firstArg = this.firstArg, firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
+        const { tabSize, nameSize, gapSize, lineGapSize, argArr, firstArg } = this, { length } = argArr, hasDefArgs = length > 0, tab = ' '.repeat(tabSize), lineGap = '\n'.repeat(lineGapSize), firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
         let usage = this.name + ' ';
         if (firstArg !== undefined) {
             usage += `<${firstArg_val}>`;
@@ -62,7 +63,10 @@ class CLI extends EventEmitter {
             options += '\n' + tab + `<${firstArg_val}>`.padEnd(nameSize + gapSize) +
                 (firstArg.help || 'The first arg.').replace(/\n/g, helpOffset);
         }
-        this.argArr.forEach(arg => {
+        argArr.forEach((arg, i) => {
+            if (!(i === 0 && firstArg === undefined)) {
+                options += lineGap;
+            }
             const { alias } = arg;
             let { name } = arg;
             if (alias) {

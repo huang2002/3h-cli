@@ -13,12 +13,13 @@ const CLI = require('3h-cli');
 
 const cli = CLI.create({
     name: 'MyCLI',
-    title: 'Here is the title.'
-}).set({
+    title: 'Here is the title.',
     filter: true,
+}).set({
     tabSize: 3,
     nameSize: 10,
-    gapSize: 6
+    gapSize: 6,
+    lineGapSize: 1
 }).first({
     name: 'a',
     val: 'v1',
@@ -60,7 +61,9 @@ MyCLI <v1> [options]
 
    <v1>            Help for
                    the first arg.
+
    -h, -help       Show this.
+
    -b        <v2>  Arg "b".
 
 ```

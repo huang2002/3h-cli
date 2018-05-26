@@ -2,7 +2,8 @@ const CLI = require('../../3h-cli');
 
 const cli = CLI.create({
     name: 'test.js',
-    title: 'Here is the test script.'
+    title: 'Here is the test script.',
+    lineGapSize: 1
 }).set({
     nameSize: 10,
     tabSize: 3

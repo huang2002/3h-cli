@@ -15,6 +15,7 @@ export interface CLIProps {
     nameSize?: number;
     gapSize?: number;
     aliasGapSize?: number;
+    lineGapSize?: number;
     filter?: boolean;
 }
 declare class CLI extends EventEmitter implements CLIProps {
@@ -34,6 +35,7 @@ declare class CLI extends EventEmitter implements CLIProps {
     nameSize: number;
     gapSize: number;
     aliasGapSize: number;
+    lineGapSize: number;
     help(): this;
     filter: boolean;
     parse(argv: string[]): Map<string, string[]>;
