@@ -4,6 +4,7 @@ interface CLIArg {
     name: string;
     val?: string;
     help?: string;
+    alias?: string[];
 }
 
 interface CLIProps {
@@ -25,7 +26,7 @@ export = class CLI extends EventEmitter implements CLIProps {
         return ans;
     }
 
-    constructor(public name: string = '???', public title?: string) {
+    constructor(public name: string = '???', public title: string = '') {
         super();
     }
 
@@ -48,7 +49,7 @@ export = class CLI extends EventEmitter implements CLIProps {
         return this;
     }
 
-    public firstArg: CLIArg | undefined;
+    public firstArg?: CLIArg;
     public first(arg: CLIArg) {
         if (this.firstArg !== undefined) {
             this.error('The first argument has been defined!');
@@ -61,8 +62,10 @@ export = class CLI extends EventEmitter implements CLIProps {
     public tabSize = 4;
     public nameSize = 6;
     public gapSize = 8;
+    public eol = '\n';
     public help() {
-        const tab = ' '.repeat(this.tabSize),
+        const { tabSize, nameSize, gapSize, eol } = this,
+            tab = ' '.repeat(tabSize),
             hasDefArgs = this.argArr.length > 0,
             firstArg = this.firstArg,
             firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
@@ -75,17 +78,16 @@ export = class CLI extends EventEmitter implements CLIProps {
             usage += ' [options]';
         }
 
-        const gapSize = this.gapSize,
-            nameSize = this.nameSize;
+        const helpOffset = eol + ' '.repeat(tabSize + nameSize + gapSize);
         let options = '';
         if (firstArg !== undefined) {
             options += '\n' + tab + `<${firstArg_val}>`.padEnd(nameSize + gapSize) +
-                (firstArg.help || 'The first arg.');
+                (firstArg.help || 'The first arg.').replace(/\n/g, helpOffset);
         }
         this.argArr.forEach(arg => {
             options += '\n' + tab + ('-' + arg.name).padEnd(nameSize) +
                 (arg.val && `<${arg.val}>` || '').padEnd(gapSize) +
-                (arg.help || `"${arg.name}" arg.`);
+                (arg.help || `"${arg.name}" arg.`).replace(/\n/g, helpOffset);
         });
 
         if (this.title !== undefined) {
@@ -101,12 +103,22 @@ export = class CLI extends EventEmitter implements CLIProps {
 
     public filter = true;
     private parse(argv: string[]) {
-        const ans = new Map<string, string[]>();
+        const { argArr } = this,
+            aliasMap = new Map<string, string>(),
+            ans = new Map<string, string[]>();
+
+        argArr.forEach(arg => {
+            const { alias } = arg;
+            if (alias) {
+                const { name } = arg;
+                alias.forEach(a => aliasMap.set(a, name));
+            }
+        });
 
         const filter = this.filter;
         let defArgs = new Set<string>();
         if (filter) {
-            this.argArr.forEach(a => defArgs.add(a.name));
+            argArr.forEach(a => defArgs.add(a.name));
         }
 
         let curArr: string[] | undefined;
@@ -117,7 +129,8 @@ export = class CLI extends EventEmitter implements CLIProps {
                 ans.set(firstArg.name, [arg]);
             } else {
                 if (isKey) {
-                    const key = arg.slice(1);
+                    const _key = arg.slice(1),
+                        key = aliasMap.get(_key) || _key;
                     if (filter && !defArgs.has(key)) {
                         this.emit('extra', key);
                         curArr = undefined;

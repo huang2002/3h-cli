@@ -22,7 +22,7 @@ const cli = CLI.create({
 }).first({
     name: 'a',
     val: 'v1',
-    help: 'Help for The first arg.'
+    help: 'Help for\nthe first arg.'
 }).arg({
     name: 'h',
     help: 'Show this.'
@@ -57,7 +57,8 @@ Here is the title.
 
 MyCLI <v1> [options]
 
-   <v1>      Help for the first arg.
+   <v1>      Help for
+             the first arg.
    -h        Show this.
    -b  <v2>  Arg "b".
 

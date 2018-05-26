@@ -1,7 +1,7 @@
 "use strict";
 const EventEmitter = require("events");
 module.exports = class CLI extends EventEmitter {
-    constructor(name = '???', title) {
+    constructor(name = '???', title = '') {
         super();
         this.name = name;
         this.title = title;
@@ -9,6 +9,7 @@ module.exports = class CLI extends EventEmitter {
         this.tabSize = 4;
         this.nameSize = 6;
         this.gapSize = 8;
+        this.eol = '\n';
         this.filter = true;
     }
     static create(options = {}) {
@@ -43,7 +44,7 @@ module.exports = class CLI extends EventEmitter {
         return this;
     }
     help() {
-        const tab = ' '.repeat(this.tabSize), hasDefArgs = this.argArr.length > 0, firstArg = this.firstArg, firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
+        const { tabSize, nameSize, gapSize, eol } = this, tab = ' '.repeat(tabSize), hasDefArgs = this.argArr.length > 0, firstArg = this.firstArg, firstArg_val = firstArg !== undefined ? firstArg.val || firstArg.name : '';
         let usage = this.name + ' ';
         if (firstArg !== undefined) {
             usage += `<${firstArg_val}>`;
@@ -51,16 +52,16 @@ module.exports = class CLI extends EventEmitter {
         if (hasDefArgs) {
             usage += ' [options]';
         }
-        const gapSize = this.gapSize, nameSize = this.nameSize;
+        const helpOffset = eol + ' '.repeat(tabSize + nameSize + gapSize);
         let options = '';
         if (firstArg !== undefined) {
             options += '\n' + tab + `<${firstArg_val}>`.padEnd(nameSize + gapSize) +
-                (firstArg.help || 'The first arg.');
+                (firstArg.help || 'The first arg.').replace(/\n/g, helpOffset);
         }
         this.argArr.forEach(arg => {
             options += '\n' + tab + ('-' + arg.name).padEnd(nameSize) +
                 (arg.val && `<${arg.val}>` || '').padEnd(gapSize) +
-                (arg.help || `"${arg.name}" arg.`);
+                (arg.help || `"${arg.name}" arg.`).replace(/\n/g, helpOffset);
         });
         if (this.title !== undefined) {
             console.log(this.title + '\n');
@@ -72,11 +73,18 @@ module.exports = class CLI extends EventEmitter {
         return this;
     }
     parse(argv) {
-        const ans = new Map();
+        const { argArr } = this, aliasMap = new Map(), ans = new Map();
+        argArr.forEach(arg => {
+            const { alias } = arg;
+            if (alias) {
+                const { name } = arg;
+                alias.forEach(a => aliasMap.set(a, name));
+            }
+        });
         const filter = this.filter;
         let defArgs = new Set();
         if (filter) {
-            this.argArr.forEach(a => defArgs.add(a.name));
+            argArr.forEach(a => defArgs.add(a.name));
         }
         let curArr;
         const firstArg = this.firstArg;
@@ -87,7 +95,7 @@ module.exports = class CLI extends EventEmitter {
             }
             else {
                 if (isKey) {
-                    const key = arg.slice(1);
+                    const _key = arg.slice(1), key = aliasMap.get(_key) || _key;
                     if (filter && !defArgs.has(key)) {
                         this.emit('extra', key);
                         curArr = undefined;

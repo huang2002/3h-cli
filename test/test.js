@@ -9,11 +9,12 @@ const cli = CLI.create({
 }).first({
     name: 'first',
     val: '1st',
-    help: 'The first arg.'
+    help: 'The\n first\n  arg.'
 }).arg({
     name: 'a',
     val: 'v1',
-    help: 'a -> v1'
+    help: 'a -> v1',
+    alias: ['aa']
 }).arg({
     name: 'b'
 }).on('error', err => {
