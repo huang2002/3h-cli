@@ -1,4 +1,4 @@
-const CLI = require('../js/3h-cli');
+const CLI = require('../../3h-cli');
 
 const cli = CLI.create({
     name: 'test.js',

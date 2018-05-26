@@ -19,8 +19,8 @@ export interface CLIProps {
     filter?: boolean;
 }
 
-///@ts-ignore
-export = class CLI extends EventEmitter implements CLIProps {
+
+class CLI extends EventEmitter implements CLIProps {
 
     static create(options: CLIProps = {}) {
         const ans = new CLI();
@@ -28,11 +28,23 @@ export = class CLI extends EventEmitter implements CLIProps {
         return ans;
     }
 
-    constructor(public name: string = '???', public title: string = '') {
+    name: string;
+    title: string;
+    constructor(name: string = '???', title: string = '') {
         super();
+        this.name = name;
+        this.title = title;
     }
 
-    private error(msg: string) {
+    on(event: 'error', listener: (err: Error) => void): this;
+    on(event: 'extra', listener: (extraArg: string) => void): this;
+    on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
+    on(event: string, listener: (...args: any[]) => void) {
+        this.addListener(event, listener);
+        return this;
+    }
+
+    error(msg: string) {
         process.nextTick(() => {
             const err = new Error(msg);
             if (!this.emit('error', err)) {
@@ -41,8 +53,8 @@ export = class CLI extends EventEmitter implements CLIProps {
         });
     }
 
-    public argArr = new Array<CLIArg>();
-    public arg(arg: CLIArg) {
+    argArr = new Array<CLIArg>();
+    arg(arg: CLIArg) {
         if (this.argArr.some(a => a.name === arg.name)) {
             this.error(`The argument '${arg.name}' has been defined!`);
         } else {
@@ -51,8 +63,8 @@ export = class CLI extends EventEmitter implements CLIProps {
         return this;
     }
 
-    public firstArg?: CLIArg;
-    public first(arg: CLIArg) {
+    firstArg?: CLIArg;
+    first(arg: CLIArg) {
         if (this.firstArg !== undefined) {
             this.error('The first argument has been defined!');
         } else {
@@ -61,11 +73,11 @@ export = class CLI extends EventEmitter implements CLIProps {
         return this;
     }
 
-    public tabSize = 4;
-    public nameSize = 10;
-    public gapSize = 8;
-    public aliasGapSize = 1;
-    public help() {
+    tabSize = 4;
+    nameSize = 10;
+    gapSize = 8;
+    aliasGapSize = 1;
+    help() {
         const { tabSize, nameSize, gapSize } = this,
             tab = ' '.repeat(tabSize),
             hasDefArgs = this.argArr.length > 0,
@@ -111,8 +123,8 @@ export = class CLI extends EventEmitter implements CLIProps {
         return this;
     }
 
-    public filter = true;
-    private parse(argv: string[]) {
+    filter = true;
+    parse(argv: string[]) {
         const { argArr } = this,
             aliasMap = new Map<string, string>(),
             ans = new Map<string, string[]>();
@@ -158,7 +170,7 @@ export = class CLI extends EventEmitter implements CLIProps {
         return ans;
     }
 
-    public set(options: CLIProps) {
+    set(options: CLIProps) {
         for (let prop in options) {
             if (!Reflect.has(options, prop)) {
                 continue;
@@ -173,7 +185,7 @@ export = class CLI extends EventEmitter implements CLIProps {
         return this;
     }
 
-    public exec(rawArgv: string[]) {
+    exec(rawArgv: string[]) {
         process.nextTick(() => {
             if (!this.emit('exec', this.parse(rawArgv.slice(2)))) {
                 this.error("'exec' event listeners haven't been defined!");
@@ -183,3 +195,6 @@ export = class CLI extends EventEmitter implements CLIProps {
     }
 
 }
+
+///@ts-ignore
+export = CLI;

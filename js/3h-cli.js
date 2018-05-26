@@ -1,21 +1,25 @@
 "use strict";
 const EventEmitter = require("events");
-module.exports = class CLI extends EventEmitter {
+class CLI extends EventEmitter {
     constructor(name = '???', title = '') {
         super();
-        this.name = name;
-        this.title = title;
         this.argArr = new Array();
         this.tabSize = 4;
         this.nameSize = 10;
         this.gapSize = 8;
         this.aliasGapSize = 1;
         this.filter = true;
+        this.name = name;
+        this.title = title;
     }
     static create(options = {}) {
         const ans = new CLI();
         ans.set(options);
         return ans;
+    }
+    on(event, listener) {
+        this.addListener(event, listener);
+        return this;
     }
     error(msg) {
         process.nextTick(() => {
@@ -144,4 +148,5 @@ module.exports = class CLI extends EventEmitter {
         });
         return this;
     }
-};
+}
+module.exports = CLI;
