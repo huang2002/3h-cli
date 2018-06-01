@@ -149,12 +149,14 @@ class CLI extends EventEmitter implements CLIProps {
             argArr.forEach(a => defArgs.add(a.name));
         }
 
-        let curArr: string[] | undefined;
         const firstArg = this.firstArg;
+        let curArr: string[] | undefined,
+            flag = firstArg !== undefined;
         argv.forEach((arg, i) => {
             const isKey = arg[0] === '-';
-            if (i === 0 && firstArg !== undefined && !isKey) {
-                ans.set(firstArg.name, [arg]);
+            if (flag && !isKey) {
+                ans.set((firstArg as CLIArg).name, curArr = [arg]);
+                flag = false;
             } else {
                 if (isKey) {
                     const _key = arg.slice(1),
@@ -163,7 +165,7 @@ class CLI extends EventEmitter implements CLIProps {
                         this.emit('extra', key);
                         curArr = undefined;
                     } else {
-                        ans.set(key, curArr = new Array<string>());
+                        ans.set(key, curArr = []);
                     }
                 } else {
                     if (curArr !== undefined) {

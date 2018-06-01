@@ -102,12 +102,13 @@ class CLI extends EventEmitter {
         if (filter) {
             argArr.forEach(a => defArgs.add(a.name));
         }
-        let curArr;
         const firstArg = this.firstArg;
+        let curArr, flag = firstArg !== undefined;
         argv.forEach((arg, i) => {
             const isKey = arg[0] === '-';
-            if (i === 0 && firstArg !== undefined && !isKey) {
-                ans.set(firstArg.name, [arg]);
+            if (flag && !isKey) {
+                ans.set(firstArg.name, curArr = [arg]);
+                flag = false;
             }
             else {
                 if (isKey) {
@@ -117,7 +118,7 @@ class CLI extends EventEmitter {
                         curArr = undefined;
                     }
                     else {
-                        ans.set(key, curArr = new Array());
+                        ans.set(key, curArr = []);
                     }
                 }
                 else {
