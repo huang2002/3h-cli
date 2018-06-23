@@ -18,10 +18,6 @@ class CLI extends EventEmitter {
         ans.set(options);
         return ans;
     }
-    on(event, listener) {
-        this.addListener(event, listener);
-        return this;
-    }
     error(msg) {
         process.nextTick(() => {
             const err = new Error(msg);

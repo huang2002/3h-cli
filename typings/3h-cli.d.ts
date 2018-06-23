@@ -18,14 +18,19 @@ interface CLIProps {
     lineGapSize?: number;
     filter?: boolean;
 }
+interface CLI {
+    emit(event: 'error', err: Error): boolean;
+    on(event: 'error', listener: (err: Error) => void): this;
+    emit(event: 'extra', extraArg: string): boolean;
+    on(event: 'extra', listener: (extraArg: string) => void): this;
+    emit(event: 'exec', args: Map<string, string[]>): boolean;
+    on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
+}
 declare class CLI extends EventEmitter implements CLIProps {
     static create(options?: CLIProps): CLI;
     name: string;
     title: string;
     constructor(name?: string, title?: string);
-    on(event: 'error', listener: (err: Error) => void): this;
-    on(event: 'extra', listener: (extraArg: string) => void): this;
-    on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
     error(msg: string): void;
     argArr: CLIArg[];
     arg(arg: CLIArg): this;

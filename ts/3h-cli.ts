@@ -20,6 +20,15 @@ interface CLIProps {
     filter?: boolean;
 }
 
+interface CLI {
+    emit(event: 'error', err: Error): boolean;
+    on(event: 'error', listener: (err: Error) => void): this;
+    emit(event: 'extra', extraArg: string): boolean;
+    on(event: 'extra', listener: (extraArg: string) => void): this;
+    emit(event: 'exec', args: Map<string, string[]>): boolean;
+    on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
+}
+
 class CLI extends EventEmitter implements CLIProps {
 
     static create(options: CLIProps = {}) {
@@ -34,14 +43,6 @@ class CLI extends EventEmitter implements CLIProps {
         super();
         this.name = name;
         this.title = title;
-    }
-
-    on(event: 'error', listener: (err: Error) => void): this;
-    on(event: 'extra', listener: (extraArg: string) => void): this;
-    on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
-    on(event: string, listener: (...args: any[]) => void) {
-        this.addListener(event, listener);
-        return this;
     }
 
     error(msg: string) {
