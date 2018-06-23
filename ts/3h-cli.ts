@@ -1,13 +1,13 @@
 import EventEmitter = require('events');
 
-export interface CLIArg {
+interface CLIArg {
     name: string;
     val?: string;
     help?: string;
     alias?: string[];
 }
 
-export interface CLIProps {
+interface CLIProps {
     name?: string;
     title?: string;
     argArr?: CLIArg[];
@@ -19,7 +19,6 @@ export interface CLIProps {
     lineGapSize?: number;
     filter?: boolean;
 }
-
 
 class CLI extends EventEmitter implements CLIProps {
 
@@ -204,5 +203,4 @@ class CLI extends EventEmitter implements CLIProps {
 
 }
 
-///@ts-ignore
 export = CLI;

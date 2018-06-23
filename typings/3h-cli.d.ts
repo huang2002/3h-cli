@@ -1,12 +1,12 @@
 /// <reference types="node" />
 import EventEmitter = require('events');
-export interface CLIArg {
+interface CLIArg {
     name: string;
     val?: string;
     help?: string;
     alias?: string[];
 }
-export interface CLIProps {
+interface CLIProps {
     name?: string;
     title?: string;
     argArr?: CLIArg[];
