@@ -1,10 +1,10 @@
 {
     "name": "3h-cli",
-    "version": "1.4.3",
+    "version": "1.4.4",
     "description": "A cli lib.",
     "main": "js/3h-cli.js",
     "scripts": {
-        "test": "node test/test.js v00 v01 -aa v1 -b -c v2",
+        "test": "node test/test.js -aa v1 v2 -b -c v4",
         "build": "tsc"
     },
     "types": "typings/3h-cli.d.ts",

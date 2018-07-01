@@ -167,6 +167,9 @@ class CLI extends EventEmitter implements CLIProps {
                     } else {
                         ans.set(key, curArr = []);
                     }
+                    if (i === 0) {
+                        flag = false;
+                    }
                 } else {
                     if (curArr !== undefined) {
                         curArr.push(arg);

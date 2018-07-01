@@ -116,6 +116,9 @@ class CLI extends EventEmitter {
                     else {
                         ans.set(key, curArr = []);
                     }
+                    if (i === 0) {
+                        flag = false;
+                    }
                 }
                 else {
                     if (curArr !== undefined) {
