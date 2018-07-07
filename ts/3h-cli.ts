@@ -1,4 +1,5 @@
 import EventEmitter = require('events');
+import fs = require('fs');
 
 interface CLIArg {
     name: string;
@@ -31,18 +32,18 @@ interface CLI {
 
 class CLI extends EventEmitter implements CLIProps {
 
+    constructor(public name = '???', public title = '') {
+        super();
+    }
+
     static create(options: CLIProps = {}) {
         const ans = new CLI();
         ans.set(options);
         return ans;
     }
 
-    name: string;
-    title: string;
-    constructor(name: string = '???', title: string = '') {
-        super();
-        this.name = name;
-        this.title = title;
+    static fromJSON(file: string, encoding = 'utf8') {
+        return CLI.create(JSON.parse(fs.readFileSync(file, encoding)));
     }
 
     error(msg: string) {
@@ -61,6 +62,12 @@ class CLI extends EventEmitter implements CLIProps {
         } else {
             this.argArr.push(arg);
         }
+        return this;
+    }
+    args(args: CLIArg[]) {
+        args.forEach(arg => {
+            this.arg(arg);
+        });
         return this;
     }
 

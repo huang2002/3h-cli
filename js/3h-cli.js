@@ -1,8 +1,11 @@
 "use strict";
 const EventEmitter = require("events");
+const fs = require("fs");
 class CLI extends EventEmitter {
     constructor(name = '???', title = '') {
         super();
+        this.name = name;
+        this.title = title;
         this.argArr = new Array();
         this.tabSize = 4;
         this.nameSize = 10;
@@ -10,13 +13,14 @@ class CLI extends EventEmitter {
         this.aliasGapSize = 1;
         this.lineGapSize = 0;
         this.filter = true;
-        this.name = name;
-        this.title = title;
     }
     static create(options = {}) {
         const ans = new CLI();
         ans.set(options);
         return ans;
+    }
+    static fromJSON(file, encoding = 'utf8') {
+        return CLI.create(JSON.parse(fs.readFileSync(file, encoding)));
     }
     error(msg) {
         process.nextTick(() => {
@@ -33,6 +37,12 @@ class CLI extends EventEmitter {
         else {
             this.argArr.push(arg);
         }
+        return this;
+    }
+    args(args) {
+        args.forEach(arg => {
+            this.arg(arg);
+        });
         return this;
     }
     first(arg) {

@@ -27,13 +27,15 @@ interface CLI {
     on(event: 'exec', listener: (args: Map<string, string[]>) => void): this;
 }
 declare class CLI extends EventEmitter implements CLIProps {
-    static create(options?: CLIProps): CLI;
     name: string;
     title: string;
     constructor(name?: string, title?: string);
+    static create(options?: CLIProps): CLI;
+    static fromJSON(file: string, encoding?: string): CLI;
     error(msg: string): void;
     argArr: CLIArg[];
     arg(arg: CLIArg): this;
+    args(args: CLIArg[]): this;
     firstArg?: CLIArg;
     first(arg: CLIArg): this;
     tabSize: number;
