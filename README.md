@@ -1,72 +1,200 @@
 # 3h-cli
-> A cli lib.
 
-## Install
-```
-$ npm install 3h-cli
-```
+> A cli program lib.
 
 ## Example
-### In `MyCLI.js`:
-```javascript
-const CLI = require('3h-cli');
 
-const cli = CLI.create({
-    name: 'MyCLI',
-    title: 'Here is the title.',
-    filter: true,
-}).set({
-    tabSize: 3,
-    nameSize: 10,
-    gapSize: 6,
-    lineGapSize: 1
-}).first({
-    name: 'a',
-    val: 'v1',
-    help: 'Help for\nthe first arg.'
-}).arg({
-    name: 'h',
-    alias: ['help'],
-    help: 'Show this.'
-}).arg({
-    name: 'b',
-    val: 'v2',
-    help: 'Arg "b".'
-}).on('extra', key => {
-    console.log(`Unknown arg "${key}"!`);
-}).on('error', err => {
-    console.log('An error occurred!');
-    console.error(err);
-}).on('exec', args => {
-    args.forEach((v, k) => {
-        console.log(`Received ${k}->${JSON.stringify(v)}.`);
-    });
-    if (args.has('h')) {
-        console.log('(Here is the help info:)');
-        cli.help();
-    }
-}).exec(process.argv);
-```
-### In the command line:
-```
-> node MyCLI firstArg
-Received a->["firstArg"].
-
->node MyCLI -help
-Received h->[].
-(Here is the help info:)
-Here is the title.
-
-MyCLI <v1> [options]
-
-   <v1>            Help for
-                   the first arg.
-
-   -h, -help       Show this.
-
-   -b        <v2>  Arg "b".
-
+```bash
+npm i 3h-cli
 ```
 
-## API
-Just read `3h-cli.d.ts` to learn about the APIs. ( By the way, that file is specified in `package.json` for typescript users. )
+```js
+/* my-cli.js */
+#!/usr/bin/env node
+const { Program } = require('3h-cli');
+
+const program = new Program('my-cli');
+
+program
+    .command({
+        name: 'foo',
+        help: 'command foo'
+    })
+    .command({
+        name: 'bar',
+        help: 'command bar'
+    })
+    .option({
+        name: '--baz',
+        alias: '-b',
+        value: '<val>',
+        help: 'option baz'
+    })
+    .option({
+        name: '--help',
+        alias: '-h',
+        help: 'show help info\nlike this'
+    })
+    .rest({
+        value: '[args...]',
+        help: 'other args'
+    })
+    .parse(process.argv)
+    .then(args => {
+        console.log('received commands:', args.commands);
+        console.log('received options:', args.options);
+        console.log('other args:', args.rest);
+        if (args.options.has('--help')) {
+            return program.help();
+        }
+    }, err => {
+        console.error(err);
+        process.exit(1);
+    })
+```
+
+```bash
+$ ./my-cli.js --help
+received commands: []
+received options: Map { '--help' => [] }
+other args: []
+
+Usage:
+  my-cli <command> [options] -- [args...]
+
+Commands:
+  foo                 command foo
+  bar                 command bar
+
+Options:
+  --baz, -b <val>     option baz
+  --help, -h          show help info
+                      like this
+  -- [args...]        other args
+
+```
+
+## API Reference
+
+*The API reference is written in TypeScript style.*
+
+```ts
+interface ParsedArgs {
+    commands: string[];
+    options: Map<string, string[]>;
+    rest: string[];
+}
+
+/**
+ * Parse arguments from the given array of strings
+ * @example
+ * ```js
+ * const rawArgs = ['foo', '--bar', '-ac', '666', '--', '10', '11'],
+ *     optionAliases = new Map([['-a', '--baz']]);
+ *
+ * console.log(parse(rawArgs, optionAliases));
+ * // {
+ * //   commands: ['foo'],
+ * //   options: Map {
+ * //     '--bar' => [],
+ * //     '--baz' => [],
+ * //     '-c' => ['666']
+ * //   },
+ * //   rest: ['10', '11']
+ * // }
+ * ```
+ */
+function parse(
+    rawArgs: string[],
+    optionAliases?: Map<string, string>
+): ParsedArgs;
+
+interface CommandDefinition {
+    name: string;
+    help: string;
+}
+
+interface OptionDefinition {
+    name: string;
+    alias?: string | null;
+    value?: string;
+    help: string;
+}
+
+interface RestDefinition {
+    value: string;
+    help: string;
+}
+
+type ProgramOptions = Partial<{
+    title: string;
+    helpInfoIndent: number;
+    helpInfoGap: number;
+    ignoreUnknownCommands: boolean;
+    ignoreUnknownOptions: boolean;
+}>;
+
+class Program Required<ProgramOptions> {
+
+    constructor(name: string, options?: Readonly<ProgramOptions>);
+
+    /**
+     * The name/title of the program
+     * (displayed in built-in help info)
+     */
+    readonly name: string;
+    title: string;
+
+    /**
+     * Style parameters of built-in help info
+     */
+    helpInfoIndent: number;
+    helpInfoGap: number;
+
+    /**
+     * Whether to ignore undefined commands/options
+     * (By default, undefined commands or options will
+     * cause the parsing promise to be rejected)
+     */
+    ignoreUnknownCommands: boolean;
+    ignoreUnknownOptions: boolean;
+
+    /**
+     * Register a command, an option or rest options
+     */
+    command(definition: CommandDefinition): this;
+    option(definition: OptionDefinition): this;
+    rest(description: RestDefinition | null): this;
+
+    /**
+     * Parse the arguments
+     * @returns a promise solved with parsed args on success
+     * or rejected on unknown commands/options
+     */
+    parse(rawArgs: string[]): Promise<ParsedArgs>;
+
+    /**
+     * Display built-in help info
+     * (the help info is generated from command and
+     * option definitions; you can append other help
+     * info after this like the example below)
+     * @example
+     * ```
+     * program.parse(process.argv)
+     *     .then(args => {
+     *         if (args.options.has('--help')) {
+     *             program.help();
+     *             console.log('\nExamples');
+     *             console.log('  my-cli foo --bar');
+     *         } else {
+     *             // ...
+     *         }
+     *     }, err => {
+     *         // ...
+     *     });
+     * ```
+     */
+    help(): void;
+
+}
+```

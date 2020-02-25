@@ -1,25 +1,20 @@
 {
     "name": "3h-cli",
-    "version": "1.5.0",
-    "description": "A cli lib.",
-    "main": "js/3h-cli.js",
+    "version": "2.0.0",
+    "description": "A cli program lib.",
+    "main": "js/index.js",
     "scripts": {
-        "test": "node test/test.js -aa v1 v2 -b -c v4",
-        "prebuild": "del /q js\\*.* typings\\*.*",
+        "test": "node test/parser.test.js && node test/program.test.js foo -ba 666 -- 10 11",
         "build": "tsc"
     },
-    "types": "typings/3h-cli.d.ts",
+    "types": "types/index.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/huang2002/3h-cli.git"
     },
     "keywords": [
         "cli",
-        "3h",
-        "command",
-        "cmd",
-        "args",
-        "param"
+        "3h"
     ],
     "author": "3h",
     "license": "MIT",
@@ -28,6 +23,11 @@
     },
     "homepage": "https://github.com/huang2002/3h-cli#readme",
     "devDependencies": {
-        "@types/node": "^9.4.6"
-    }
+        "@types/node": "^9.6.55",
+        "typescript": "^3.8.2"
+    },
+    "files": [
+        "js",
+        "types"
+    ]
 }
