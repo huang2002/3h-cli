@@ -79,7 +79,28 @@ Options:
 *The API reference is written in TypeScript style.*
 
 ```ts
-interface ParsedArgs {
+class Args {
+
+    constructor(
+        commands: string[],
+        options: Map<string, string[]>,
+        rest: string[]
+    );
+
+    readonly commands: string[];
+    readonly options: Map<string, string[]>;
+    readonly rest: string[];
+
+    /**
+     * A utility method that returns
+     * the specific option if it exists
+     * or an empty array otherwise
+     */
+    getOption(name: string): string[];
+
+}
+
+interface Args {
     commands: string[];
     options: Map<string, string[]>;
     rest: string[];
@@ -107,7 +128,7 @@ interface ParsedArgs {
 function parse(
     rawArgs: string[],
     optionAliases?: Map<string, string>
-): ParsedArgs;
+): Args;
 
 interface CommandDefinition {
     name: string;
@@ -171,7 +192,7 @@ class Program Required<ProgramOptions> {
      * @returns a promise solved with parsed args on success
      * or rejected on unknown commands/options
      */
-    parse(rawArgs: string[]): Promise<ParsedArgs>;
+    parse(rawArgs: string[]): Promise<Args>;
 
     /**
      * Display built-in help info

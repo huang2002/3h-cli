@@ -1,13 +1,9 @@
-export interface ParsedArgs {
-    commands: string[];
-    options: Map<string, string[]>;
-    rest: string[];
-}
+import { Args } from './Args';
 
 export const parse = (
     rawArgs: string[],
     optionAliases?: Map<string, string>
-): ParsedArgs => {
+) => {
 
     const commands = new Array<string>(),
         options = new Map<string, string[]>(),
@@ -58,6 +54,6 @@ export const parse = (
 
     });
 
-    return { commands, options, rest };
+    return new Args(commands, options, rest);
 
 };
