@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.0
+
+Add class `Args`
+
 #### 2.1.1
 
 Fix docs
