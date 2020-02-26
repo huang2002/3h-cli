@@ -111,19 +111,19 @@ function parse(
 
 interface CommandDefinition {
     name: string;
-    help: string;
+    help?: string;
 }
 
 interface OptionDefinition {
     name: string;
     alias?: string | null;
     value?: string;
-    help: string;
+    help?: string;
 }
 
 interface RestDefinition {
-    value: string;
-    help: string;
+    value?: string;
+    help?: string;
 }
 
 type ProgramOptions = Partial<{
