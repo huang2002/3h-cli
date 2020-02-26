@@ -2,19 +2,19 @@ import { parse } from './parser';
 
 export interface CommandDefinition {
     name: string;
-    help: string;
+    help?: string;
 }
 
 export interface OptionDefinition {
     name: string;
     alias?: string | null;
     value?: string;
-    help: string;
+    help?: string;
 }
 
 export interface RestDefinition {
-    value: string;
-    help: string;
+    value?: string;
+    help?: string;
 }
 
 export type ProgramOptions = Partial<{
@@ -108,7 +108,9 @@ export class Program implements Required<ProgramOptions> {
             }
         });
         if (_rest) {
-            const restWidth = _rest.value.length + 3; // `-- ${value}`
+            const restWidth = _rest.value
+                ? _rest.value.length + 3 // `-- ${value}`
+                : 2;
             if (definitionWidth < restWidth) {
                 definitionWidth = restWidth;
             }
@@ -143,7 +145,7 @@ export class Program implements Required<ProgramOptions> {
                 console.log(
                     startIndent
                     + command.name.padEnd(definitionWidth)
-                    + command.help.replace(eolPattern, helpEOL)
+                    + (command.help && command.help.replace(eolPattern, helpEOL))
                 );
             });
         }
@@ -164,7 +166,7 @@ export class Program implements Required<ProgramOptions> {
                 console.log(
                     startIndent
                     + name.padEnd(definitionWidth)
-                    + param.help.replace(eolPattern, helpEOL)
+                    + (param.help && param.help.replace(eolPattern, helpEOL))
                 );
             });
         }
