@@ -155,7 +155,7 @@ type ProgramOptions = Partial<{
     ignoreUnknownOptions: boolean;
 }>;
 
-class Program Required<ProgramOptions> {
+class Program {
 
     constructor(name: string, options?: Readonly<ProgramOptions>);
 
