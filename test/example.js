@@ -5,13 +5,13 @@ const { Program } = require('..');
 const program = new Program('my-cli');
 
 program
-    .command({
+    .action({
         name: 'foo',
-        help: 'command foo'
+        help: 'action foo'
     })
-    .command({
+    .action({
         name: 'bar',
-        help: 'command bar'
+        help: 'action bar'
     })
     .option({
         name: '--baz',
@@ -30,7 +30,7 @@ program
     })
     .parse(process.argv)
     .then(args => {
-        console.log('received commands:', args.commands);
+        console.log('received actions:', args.actions);
         console.log('received options:', args.options);
         console.log('other args:', args.rest);
         if (args.options.has('--help')) {

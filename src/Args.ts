@@ -1,7 +1,7 @@
 export class Args {
 
     constructor(
-        readonly commands: string[],
+        readonly actions: string[],
         readonly options: Map<string, string[]>,
         readonly rest: string[]
     ) { }

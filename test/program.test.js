@@ -8,13 +8,13 @@ const program = new Program('3h-cli-test', {
 console.log('###### program test ######');
 
 program
-    .command({
+    .action({
         name: 'foo',
-        help: 'command foo'
+        help: 'action foo'
     })
-    .command({
+    .action({
         name: 'bar',
-        help: 'command bar'
+        help: 'action bar'
     })
     .option({
         name: '-a',

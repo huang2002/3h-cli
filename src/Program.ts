@@ -1,6 +1,6 @@
 import { parse } from './parser';
 
-export interface CommandDefinition {
+export interface ActionDefinition {
     name: string;
     help?: string;
 }
@@ -21,7 +21,7 @@ export type ProgramOptions = Partial<{
     title: string;
     helpInfoIndent: number;
     helpInfoGap: number;
-    ignoreUnknownCommands: boolean;
+    ignoreUnknownActions: boolean;
     ignoreUnknownOptions: boolean;
 }>;
 
@@ -36,14 +36,14 @@ export class Program implements Required<ProgramOptions> {
     title = '';
     helpInfoIndent = 2;
     helpInfoGap = 5;
-    ignoreUnknownCommands = false;
+    ignoreUnknownActions = true;
     ignoreUnknownOptions = false;
-    private _commands = new Array<CommandDefinition>();
+    private _actions = new Array<ActionDefinition>();
     private _options = new Array<OptionDefinition>();
     private _rest: RestDefinition | null = null;
 
-    command(definition: CommandDefinition) {
-        this._commands.push(definition);
+    action(definition: ActionDefinition) {
+        this._actions.push(definition);
         return this;
     }
 
@@ -58,7 +58,7 @@ export class Program implements Required<ProgramOptions> {
     }
 
     async parse(rawArgs: string[]) {
-        const { _commands, _options } = this,
+        const { _actions, _options } = this,
             aliases = new Map<string, string>();
         _options.forEach(param => {
             if (param.alias) {
@@ -66,10 +66,10 @@ export class Program implements Required<ProgramOptions> {
             }
         });
         const args = parse(rawArgs.slice(2), aliases);
-        if (!this.ignoreUnknownCommands) {
-            args.commands.forEach(command => {
-                if (!_commands.some(cmd => cmd.name === command)) {
-                    throw `unknown command -- ${command}`;
+        if (!this.ignoreUnknownActions) {
+            args.actions.forEach(action => {
+                if (!_actions.some(cmd => cmd.name === action)) {
+                    throw `unknown action -- ${action}`;
                 }
             });
         }
@@ -85,12 +85,12 @@ export class Program implements Required<ProgramOptions> {
 
     help() {
 
-        const { _commands, _options, _rest } = this,
+        const { _actions, _options, _rest } = this,
             eolPattern = /(?:\r)?\n/g;
 
         let definitionWidth = 2;
-        _commands.forEach(command => {
-            const width = command.name.length;
+        _actions.forEach(action => {
+            const width = action.name.length;
             if (width > definitionWidth) {
                 definitionWidth = width;
             }
@@ -122,8 +122,8 @@ export class Program implements Required<ProgramOptions> {
             helpEOL = '\n' + helpIndent;
 
         let usage = `${this.name}`;
-        if (_commands.length) {
-            usage += ' <command>';
+        if (_actions.length) {
+            usage += ' <action>';
         }
         if (_options.length) {
             usage += ' [options]';
@@ -139,13 +139,13 @@ export class Program implements Required<ProgramOptions> {
         console.log('\nUsage:');
         console.log(startIndent + usage);
 
-        if (_commands.length) {
-            console.log('\nCommands:');
-            _commands.forEach(command => {
+        if (_actions.length) {
+            console.log('\nActions:');
+            _actions.forEach(action => {
                 console.log(
                     startIndent
-                    + command.name.padEnd(definitionWidth)
-                    + (command.help && command.help.replace(eolPattern, helpEOL))
+                    + action.name.padEnd(definitionWidth)
+                    + (action.help && action.help.replace(eolPattern, helpEOL))
                 );
             });
         }

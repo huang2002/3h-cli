@@ -16,13 +16,13 @@ const { Program } = require('3h-cli');
 const program = new Program('my-cli');
 
 program
-    .command({
+    .action({
         name: 'foo',
-        help: 'command foo'
+        help: 'action foo'
     })
-    .command({
+    .action({
         name: 'bar',
-        help: 'command bar'
+        help: 'action bar'
     })
     .option({
         name: '--baz',
@@ -41,7 +41,7 @@ program
     })
     .parse(process.argv)
     .then(args => {
-        console.log('received commands:', args.commands);
+        console.log('received actions:', args.actions);
         console.log('received options:', args.options);
         console.log('other args:', args.rest);
         if (args.options.has('--help')) {
@@ -55,16 +55,16 @@ program
 
 ```bash
 $ ./my-cli.js --help
-received commands: []
+received actions: []
 received options: Map { '--help' => [] }
 other args: []
 
 Usage:
-  my-cli <command> [options] -- [args...]
+  my-cli <action> [options] -- [args...]
 
-Commands:
-  foo                 command foo
-  bar                 command bar
+actions:
+  foo                 action foo
+  bar                 action bar
 
 Options:
   --baz, -b <val>     option baz
@@ -82,12 +82,12 @@ Options:
 class Args {
 
     constructor(
-        commands: string[],
+        actions: string[],
         options: Map<string, string[]>,
         rest: string[]
     );
 
-    readonly commands: string[];
+    readonly actions: string[];
     readonly options: Map<string, string[]>;
     readonly rest: string[];
 
@@ -101,7 +101,7 @@ class Args {
 }
 
 interface Args {
-    commands: string[];
+    actions: string[];
     options: Map<string, string[]>;
     rest: string[];
 }
@@ -115,7 +115,7 @@ interface Args {
  *
  * console.log(parse(rawArgs, optionAliases));
  * // {
- * //   commands: ['foo'],
+ * //   actions: ['foo'],
  * //   options: Map {
  * //     '--bar' => [],
  * //     '--baz' => [],
@@ -130,7 +130,7 @@ function parse(
     optionAliases?: Map<string, string>
 ): Args;
 
-interface CommandDefinition {
+interface ActionDefinition {
     name: string;
     help?: string;
 }
@@ -151,7 +151,7 @@ type ProgramOptions = Partial<{
     title: string;
     helpInfoIndent: number;
     helpInfoGap: number;
-    ignoreUnknownCommands: boolean;
+    ignoreUnknownActions: boolean;
     ignoreUnknownOptions: boolean;
 }>;
 
@@ -173,34 +173,35 @@ class Program {
     helpInfoGap: number;
 
     /**
-     * Whether to ignore undefined commands/options
-     * (By default, undefined commands or options will
-     * cause the parsing promise to be rejected)
+     * Whether to ignore undefined actions/options
+     * (By default, undefined options will
+     * cause the parsing promise to be rejected
+     * but unknown actions won't)
      */
-    ignoreUnknownCommands: boolean;
+    ignoreUnknownActions: boolean;
     ignoreUnknownOptions: boolean;
 
     /**
-     * Register a command, an option or rest options
+     * Register a action, an option or rest options
      */
-    command(definition: CommandDefinition): this;
+    action(definition: ActionDefinition): this;
     option(definition: OptionDefinition): this;
     rest(description: RestDefinition | null): this;
 
     /**
      * Parse the arguments
      * @returns a promise solved with parsed args on success
-     * or rejected on unknown commands/options
+     * or rejected on unknown actions/options
      */
     parse(rawArgs: string[]): Promise<Args>;
 
     /**
      * Display built-in help info
-     * (the help info is generated from command and
+     * (the help info is generated from action and
      * option definitions; you can append other help
      * info after this like the example below)
      * @example
-     * ```
+     * ```js
      * program.parse(process.argv)
      *     .then(args => {
      *         if (args.options.has('--help')) {

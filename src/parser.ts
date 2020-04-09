@@ -5,11 +5,11 @@ export const parse = (
     optionAliases?: Map<string, string>
 ) => {
 
-    const commands = new Array<string>(),
+    const actions = new Array<string>(),
         options = new Map<string, string[]>(),
         rest = new Array<string>();
 
-    let stack = commands;
+    let stack = actions;
 
     const initParam = (name: string) => {
         const key = (optionAliases && optionAliases.has(name))
@@ -54,6 +54,6 @@ export const parse = (
 
     });
 
-    return new Args(commands, options, rest);
+    return new Args(actions, options, rest);
 
 };

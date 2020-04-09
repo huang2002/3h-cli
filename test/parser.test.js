@@ -9,9 +9,9 @@ const result = parse(
 console.log('###### parsing result ######');
 console.log(result);
 
-console.assert(result.commands.length === 2);
-console.assert(result.commands[0] === 'test');
-console.assert(result.commands[1] === 'cli');
+console.assert(result.actions.length === 2);
+console.assert(result.actions[0] === 'test');
+console.assert(result.actions[1] === 'cli');
 console.assert(result.options.size === 4);
 console.assert(result.options.get('--foo').length === 1);
 console.assert(result.options.get('--foo')[0] === 'bar');
