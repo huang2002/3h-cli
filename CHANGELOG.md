@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.0.0
+
+- Replace commands with actions
+
 ## 2.2.1
 
 - Add license file
