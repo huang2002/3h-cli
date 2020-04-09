@@ -24,7 +24,7 @@
     "homepage": "https://github.com/huang2002/3h-cli#readme",
     "devDependencies": {
         "@types/node": "^9.6.55",
-        "typescript": "^3.8.2"
+        "typescript": "^3.8.3"
     },
     "files": [
         "js",
