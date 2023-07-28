@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.0
+
+- Change `RestDefinition.value` from optional to required
+- Update deps
+
 ## 3.0.0
 
 - Replace commands with actions
