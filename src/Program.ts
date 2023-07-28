@@ -13,7 +13,7 @@ export interface OptionDefinition {
 }
 
 export interface RestDefinition {
-    value?: string;
+    value: string;
     help?: string;
 }
 

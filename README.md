@@ -13,7 +13,9 @@ npm i 3h-cli
 #!/usr/bin/env node
 const { Program } = require('3h-cli');
 
-const program = new Program('my-cli');
+const program = new Program('my-cli', {
+    title: 'This is my-cli.',
+});
 
 program
     .action({
@@ -44,6 +46,7 @@ program
         console.log('received actions:', args.actions);
         console.log('received options:', args.options);
         console.log('other args:', args.rest);
+        console.log('--------------------------------');
         if (args.options.has('--help')) {
             return program.help();
         }
@@ -58,6 +61,8 @@ $ ./my-cli.js --help
 received actions: []
 received options: Map { '--help' => [] }
 other args: []
+--------------------------------
+This is my-cli.
 
 Usage:
   my-cli <action> [options] -- [args...]
@@ -143,7 +148,7 @@ interface OptionDefinition {
 }
 
 interface RestDefinition {
-    value?: string;
+    value: string;
     help?: string;
 }
 
